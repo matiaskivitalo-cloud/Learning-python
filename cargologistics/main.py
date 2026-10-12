@@ -2,6 +2,7 @@
 The main function of the cargo logistics application.
 It initializes the application, sets up the necessary configurations, and starts the main event loop.
 The application is designed to have the user handle the logistics of cargo transportation, managing inventory and tracking ship locations.
+Matias Kivitalo
 """
 class Cargoship():
     """
@@ -169,6 +170,7 @@ def read_cargoships():
             Returns False if the file is not found or an error occurs during reading.
     """
     cargoships = {}
+
     try:
         with open("cargoships.txt", "r") as file:
             for line in file:
