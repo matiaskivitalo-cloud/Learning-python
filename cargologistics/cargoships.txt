@@ -1,0 +1,4 @@
+FI1;Aalto;50
+SE1;Pohjantähti;30
+NO1;FjordQueen;45
+EE1;Laine;25

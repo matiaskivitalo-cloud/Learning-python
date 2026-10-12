@@ -1,0 +1,5 @@
+Helsinki;10;20
+Tukholma;5;15
+Oslo;2;18
+Tallinna;12;19
+Maarianhamina;7;17
