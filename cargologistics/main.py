@@ -8,7 +8,7 @@ class Cargoship():
     A class representing a cargo ship in the logistics application.
     """
     
-    def __init__(self, id, name, capacity, current_load=[], location=(0, 0)):
+    def __init__(self, id, name, capacity, current_load=0.0, location=(0, 0)):
         """ 
         Initializes a new instance of the Cargoship class.
         
@@ -55,7 +55,7 @@ class Cargoship():
         Returns the geographical location of the cargo ship.
         
         Returns:
-            list: The geographical location of the cargo ship as [latitude, longitude].
+            tuple: The geographical location of the cargo ship as [latitude, longitude].
         """
         return self.__location
 
@@ -66,7 +66,7 @@ class Cargoship():
         Returns:
             str: A string representation of the cargo ship.
         """
-        return f"Cargoship(id={self.__id}, name={self.__name}"
+        return f"Cargoship(id={self.__id}, name={self.__name})"
     
     def add_cargo(self, cargo):
         """
@@ -104,7 +104,7 @@ class Harbor():
         
         Args:
             name (str): The name of the harbor.
-            location (str): The geographical location of the harbor.
+            location (tuple): The geographical location of the harbor as (latitude, longitude).
         """
         self.__name = name
         self.__location = location
@@ -131,8 +131,9 @@ def read_harbors():
     """
     Reads harbor data from a file and populates the harbors dictionary.
     
-    Args:
-        harbors (dict): A dictionary to store harbor objects with their names as keys.
+    Returns:
+        dict: A dictionary of Harbor objects with harbor names as keys.
+            Returns False if the file is not found or an error occurs during reading.
     """
     harbors = {}
     try:
@@ -159,13 +160,36 @@ def read_harbors():
         print(f"An error occurred while reading harbors: {e}")
         return False
 
-def read_cargoships(cargoships):
+def read_cargoships():
     """
     Reads cargo ship data from a file and populates the cargoships dictionary.
+
+    Returns:
+        dict: A dictionary of Cargoship objects with ship IDs as keys.
+            Returns False if the file is not found or an error occurs during reading.
     """
     cargoships = {}
     try:
         with open("cargoships.txt", "r") as file:
+            for line in file:
+                parts = line.strip().split(";")
+                id = parts[0]
+                name = parts[1]
+                try:
+                    capacity = int(parts[2])
+                except ValueError:
+                    print(f"Invalid capacity data for cargoship '{name}'. Skipping this entry.")
+                    continue
+                cargoships[id] = Cargoship(id, name, capacity)
+        return cargoships
+
+    except FileNotFoundError:
+        print("Cargoship data file not found.")
+        return False
+    
+    except Exception as e:
+        print(f"An error occurred while reading cargoships: {e}")
+        return False
 
 def main():
     """
@@ -173,10 +197,14 @@ def main():
     It initializes the application, sets up the necessary configurations, and starts the main event loop.
     """
     
+    cargoships = read_cargoships()
+    harbors = read_harbors()
+
+    if  harbors is False or cargoships is False:
+        print("Error reading data files. Exiting application.")
+        return
     
 
-    read_harbors()
-    read_cargoships()
 
 
 
