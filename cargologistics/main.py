@@ -56,9 +56,21 @@ class Cargoship():
         Returns the geographical location of the cargo ship.
         
         Returns:
-            tuple: The geographical location of the cargo ship as [latitude, longitude].
+            tuple: The geographical location of the cargo ship as (latitude, longitude).
         """
         return self.__location
+    
+    def set_location(self, location):
+        """
+        Sets the geographical location of the cargo ship.
+        
+        Args:
+            location (tuple): The new geographical location of the cargo ship as (latitude, longitude).
+        """
+        if not (isinstance(location, tuple) and len(location) == 2 and all(isinstance(coord, int) for coord in location)):
+            raise ValueError("Location must be a tuple of two numeric values (latitude, longitude).")
+        
+        self.__location = location
 
     def __str__(self):
         """
@@ -67,7 +79,7 @@ class Cargoship():
         Returns:
             str: A string representation of the cargo ship.
         """
-        return f"Cargoship(id={self.__id}, name={self.__name})"
+        return f"Cargoship(id={self.__id}, name={self.__name}, location={self.__location}, current_load={self.__current_load}, capacity={self.__capacity})"
     
     def add_cargo(self, cargo):
         """
@@ -124,9 +136,18 @@ class Harbor():
         Returns the geographical location of the harbor.
         
         Returns:
-            str: The geographical location of the harbor.
+            tuple: The geographical location of the harbor.
         """
         return self.__location
+    
+    def __str__(self):
+        """
+        Returns a string representation of the harbor.
+        
+        Returns:
+            str: A string representation of the harbor.
+        """
+        return f"Harbor(name={self.__name}, location={self.__location})"
 
 def read_harbors():
     """
@@ -206,13 +227,68 @@ def main():
         print("Error reading data files. Exiting application.")
         return
     
+    print("Cargo Logistics Application")
 
+    print("1. 'Quit' - Exit the application")
+    print("2. 'List' - List all cargoships and harbors")
+    print("3. 'Add' - Add cargo to a cargoship")
+    print("4. 'Remove' - Remove cargo from a cargoship")
+    print("5. 'Move' - Move a cargoship to a new location")
 
+    while True:
 
+        choice = input("Enter your choice: ").strip().lower()
 
+        if choice in ("quit", "1"):
+            print("Exiting the application.")
+            break
 
+        elif choice in ("list", "2"):
+            print("Harbors:")
+            for harbor in harbors.values():
+                print(harbor)
+            print("\nCargoships:")
+            for ship in cargoships.values():
+                print(ship)
 
+        elif choice in ("add", "3"):
+            ship_id = input("Enter the ID of the cargoship: ").strip()
+            if ship_id in cargoships:
+                try:
+                    cargo_amount = float(input("Enter the amount of cargo to add (in tons): ").strip())
+                    cargoships[ship_id].add_cargo(cargo_amount)
+                    print(f"Added {cargo_amount} tons of cargo to {cargoships[ship_id].get_name()}.")
+                except ValueError as e:
+                    print(f"Error: {e}")
+            else:
+                print("Cargoship not found.")
 
+        elif choice in ("remove", "4"):
+            ship_id = input("Enter the ID of the cargoship: ").strip()
+            if ship_id in cargoships:
+                try:
+                    cargo_amount = float(input("Enter the amount of cargo to remove (in tons): ").strip())
+                    cargoships[ship_id].remove_cargo(cargo_amount)
+                    print(f"Removed {cargo_amount} tons of cargo from {cargoships[ship_id].get_name()}.")
+                except ValueError as e:
+                    print(f"Error: {e}")
+            else:
+                print("Cargoship not found.")
 
+        elif choice in ("move", "5"):
+            ship_id = input("Enter the ID of the cargoship: ").strip()
+            if ship_id in cargoships:
+                harbor_name = input("Enter the name of the harbor to move to: ").strip()
+                if harbor_name in harbors:
+                    cargoships[ship_id].set_location(harbors[harbor_name].get_location())
+                    print(f"Moved {cargoships[ship_id].get_name()} to {harbors[harbor_name].get_name()}.")
+                else:
+                    print("Harbor not found.")
+            else:
+                print("Cargoship not found.")
+
+        else:
+            print("Invalid choice. Please try again.")
+            
 if __name__ == "__main__":
     main()
